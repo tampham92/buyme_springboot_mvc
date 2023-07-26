@@ -5,25 +5,20 @@
     <title>Spring MVC</title>
 </head>
 <body>
-
-<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="header">
-
-    <a class="navbar-brand" th:href="@{/}">Home</a>
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04"
-            aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarsExample04">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item" th:class="${activePage == 'product'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="@{/products}">Sản phẩm<span class="sr-only"></span></a>
-            </li>
-            <li class="nav-item" th:class="${activePage == 'account'} ? 'nav-item active' : 'nav-item'">
-                <a class="nav-link" th:href="@{/account}">Tài khoản</a>
-            </li>
-        </ul>
+<nav th:fragment="header" class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Home</a>
+        <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/account}">Account</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/products}">About</a></li>
+                <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 </body>

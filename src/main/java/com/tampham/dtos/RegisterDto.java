@@ -27,4 +27,15 @@ public class RegisterDto {
     @Getter
     @Setter
     private String phoneNumber;
+
+    public RegisterDto(String username, String password,
+                        String fullName, String email,
+                        String address, String phoneNumber){
+        this.username = username;
+        this.password = password;
+        this.fullName = fullName;
+        this.email = email;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 }
