@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->{
                     try {
                         auth.antMatchers("/products/**").permitAll();
+                        auth.antMatchers("/register/**").permitAll();
                         auth.antMatchers("/").permitAll()
                                 .and().formLogin().permitAll().and().logout().permitAll();
                         auth.anyRequest().authenticated().and().httpBasic();

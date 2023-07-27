@@ -20,7 +20,6 @@ public class ProductCtr {
 
     @GetMapping("/products")
     public String getProducts(Model model){
-
         List<Product> products = productRepository.findAll();
 
         model.addAttribute("activePage", "product");

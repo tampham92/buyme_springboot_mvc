@@ -30,18 +30,14 @@ public class AuthCtr {
     @Autowired
     private UserRepository usersRepository;
 
+    @GetMapping("/register")
+    public String registerUser() {
+        return "auth/register";
+    }
+
     @PostMapping("/register")
     public void createUser(RegisterDto form) {
-//        Role adminRole = roleRepository.save(new Role("ADMIN"));
-//        roleRepository.save(new Role("USER"));
-
-//        Set<Role> roles = new HashSet<>();
-//        roles.add(adminRole);
-//
-//        User user = new User("admin", passwordEncoder.encode("12345"), "Phạm Hoàng Tâm", roles);
-//        usersRepository.save(user);
-
+        System.out.println(form.getUsername());
         User user = authService.registerUser(form);
-        System.out.println(user);
     }
 }

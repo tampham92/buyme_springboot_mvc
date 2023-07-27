@@ -11,7 +11,8 @@ import javax.persistence.*;
 public class OrderItem extends BaseModel{
     @Getter
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
     private Product product;
 
     @Getter
