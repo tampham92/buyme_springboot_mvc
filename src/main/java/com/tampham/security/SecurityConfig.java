@@ -7,7 +7,9 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,10 +37,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->{
                     try {
-                        auth.antMatchers("/products/**").permitAll();
-                        auth.antMatchers("/register/**").permitAll();
-                        auth.antMatchers("/").permitAll()
-                                .and().formLogin().permitAll().and().logout().permitAll();
+                        auth.antMatchers("/", "/products/**", "/buyer/register/**").permitAll()
+                                .and().formLogin().loginPage("/buyer/login").permitAll()
+                                .and().logout((logout) -> logout
+                                .logoutSuccessUrl("/products")
+                                .permitAll()
+                        );
                         auth.anyRequest().authenticated().and().httpBasic();
 
                     } catch (Exception e) {
@@ -49,5 +53,4 @@ public class SecurityConfig {
 
         return  http.build();
     }
-
 }

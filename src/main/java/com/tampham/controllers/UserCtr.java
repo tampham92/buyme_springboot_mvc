@@ -15,7 +15,7 @@ public class UserCtr {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/account")
+    @GetMapping("/buyer/account")
     public String getAccountInfo(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
