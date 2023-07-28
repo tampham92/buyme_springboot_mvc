@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Buy me</title>
@@ -20,11 +20,13 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/products}">Products</a></li>
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/buyer/register}">Đăng ký</a></li>
-                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/buyer/login}">Đăng nhập</a></li>
-                    <li class="dropdown nav-item mx-0 mx-lg-1 no-arrow">
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/buyer/register}" sec:authorize="isAnonymous()">Đăng ký</a></li>
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" th:href="@{/buyer/login}" sec:authorize="isAnonymous()">Đăng nhập</a></li>
+
+                    <li class="dropdown nav-item mx-0 mx-lg-1 no-arrow" sec:authorize="isAuthenticated()">
                         <a class="btn-group nav-link dropdown-toggle py-3 px-0 px-lg-3" data-bs-toggle="dropdown" role="button">
-                            Tam Pham</a>
+                            <span sec:authentication="name"/>
+                        </a>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" th:href="@{/buyer/account}">
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>

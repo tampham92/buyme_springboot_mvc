@@ -25,12 +25,12 @@
                         <div class="form-group my-3">
                             <input type="text" name="username" class="form-control form-control-user" id="exampleFirstName"
                                    placeholder="Username">
-                            <p th:if="${#fields.hasErrors('username')}" class="error" th:errors="*{username}" />
+                            <p th:if="${errors}" class="text-danger">[[${errors.get("username")}]]</p>
                         </div>
                         <div class="form-group my-3">
                             <input type="password" name="password" class="form-control form-control-user"
                                    id="exampleRepeatPassword" placeholder="Password">
-                            <p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}" />
+                            <p th:if="${errors}" class="text-danger">[[${errors.get("password")}]]</p>
                         </div>
                         <div class="form-group my-3">
                             <input type="text" name="fullName" class="form-control form-control-user" id="exampleLastName"
@@ -39,12 +39,10 @@
                         <div class="form-group my-3">
                             <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
                                    placeholder="Email Address">
-                            <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}" />
                         </div>
                         <div class="form-group my-3">
                             <input type="text" name="phoneNumber" class="form-control form-control-user"
                                    id="exampleInputPassword" placeholder="Số điện thoại">
-                            <p th:if="${#fields.hasErrors('phoneNumber')}" th:errorclass="error" th:errors="*{phoneNumber}" />
                         </div>
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-primary btn-user btn-block my-3">
@@ -54,7 +52,9 @@
                     </form>
                     <hr>
                     <div class="text-center">
-                        <a class="small">Bạn đã có tài khoản? Đăng nhập!</a>
+                        <p>Bạn đã có tài khoản?
+                            <span><a class="link-offset-2 link-underline link-underline-opacity-0 link-underline-opacity-75-hover" th:href="@{/buyer/login}">Đăng nhập!</a></span>
+                        </p>
                     </div>
                 </div>
             </div>

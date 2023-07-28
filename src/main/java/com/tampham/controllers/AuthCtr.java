@@ -47,14 +47,15 @@ public class AuthCtr {
     }
 
     @PostMapping("/buyer/register")
-    public String createUser(@Valid RegisterDto form, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()){
-            return "auth/register";
+    public String createUser(RegisterDto form, Model model) {
+        Map<String, String> errors = validateRegister(form);
+        if (errors.isEmpty()){
+            authService.registerUser(form);
+            return "auth/login";
         }
 
-        authService.registerUser(form);
-        return "auth/login";
-
+        model.addAttribute("errors", errors);
+        return "auth/register";
     }
 
     /**
@@ -77,6 +78,26 @@ public class AuthCtr {
 //        return "buyer/account";
 //    }
 
+    private Map<String, String> validateRegister(RegisterDto form){
+        Map<String, String> error = new HashMap<>();
+
+        if (form.getUsername().isEmpty()){
+            error.put("username", "Tên đăng nhập không được bỏ trống");
+        }
+
+        if (form.getPassword().isEmpty()){
+            error.put("password", "Mật khẩu không được bỏ trống");
+        }
+
+        if (!form.getUsername().isEmpty()) {
+            Optional<User> user = usersRepository.findByUsername(form.getUsername());
+            if (user.isPresent()) {
+                error.put("username", "Tên đăng nhập đã tồn tại");
+            }
+        }
+
+        return error;
+    }
 
     private Map<String, String> validateLogin(LoginDto form){
         Map<String, String> error = new HashMap<>();
