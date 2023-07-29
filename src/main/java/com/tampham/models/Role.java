@@ -1,9 +1,9 @@
 package com.tampham.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "roles")

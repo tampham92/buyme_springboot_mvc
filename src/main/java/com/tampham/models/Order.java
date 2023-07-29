@@ -3,10 +3,10 @@ package com.tampham.models;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tampham.enums.OrderStatus;
 import com.tampham.enums.PaymentType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 

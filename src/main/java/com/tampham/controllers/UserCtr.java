@@ -2,7 +2,6 @@ package com.tampham.controllers;
 
 import com.tampham.models.User;
 import com.tampham.repository.UserRepository;
-import com.tampham.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,7 @@ public class UserCtr {
         model.addAttribute("activePage", "account");
         model.addAttribute("user", user);
 
-        return "account";
+        return "user/user_info";
     }
 
 

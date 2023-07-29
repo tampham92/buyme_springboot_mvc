@@ -7,9 +7,10 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -34,23 +35,21 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->{
-                    try {
-                        auth.antMatchers("/", "/products/**", "/buyer/register/**").permitAll()
-                                .and().formLogin().loginPage("/buyer/login").permitAll()
-                                .and().logout((logout) -> logout
-                                .logoutSuccessUrl("/products")
-                                .permitAll()
-                        );
-                        auth.anyRequest().authenticated().and().httpBasic();
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-
-                });
+                    auth.requestMatchers("/", "/product/productList", "/buyer/register/**").permitAll();
+                    auth.requestMatchers("product/create", "product/edit").hasAuthority("ADMIN");
+                    auth.anyRequest().authenticated();
+                }).formLogin((form) -> form
+                        .loginProcessingUrl("/buyer/login")
+                        .defaultSuccessUrl("/buyer/account", true)
+                        .permitAll()
+                ).logout(form-> form.logoutUrl("/buyer/logout")).httpBasic(Customizer.withDefaults());
 
         return  http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return (web -> web.ignoring().requestMatchers("/img/**"));
     }
 }

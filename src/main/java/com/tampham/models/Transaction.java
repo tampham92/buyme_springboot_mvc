@@ -1,10 +1,10 @@
 package com.tampham.models;
 
 import com.tampham.enums.TransactionStatus;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "transaction")

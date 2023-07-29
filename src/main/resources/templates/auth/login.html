@@ -12,50 +12,44 @@
 
 <div th:replace="~{layout/header :: header}"> </div>
 
-<div class="container my-5">
-
+<div class="container">
     <div class="card o-hidden border-0 shadow-sm my-5">
         <div class="row card-body">
             <div class="col-lg-6">
-                <div class="p-5">
-                    <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Đăng nhập</h1>
+                <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Đăng nhập</h1>
+                </div>
+                <form class="user" th:action="@{/buyer/login}" method="post">
+                    <div th:if="${param.error}" class="text-danger">
+                        Mật khẩu và username không đúng.
                     </div>
-                    <form class="user" th:action="@{/buyer/login}" method="post">
-                        <div th:if="${param.error}" class="text-danger">
-                            Mật khẩu và username không đúng.
-                        </div>
-                        <div th:if="${param.logout}" class="text-success">
-                            You have been logged out.
-                        </div>
-                        <div class="form-group my-3">
-                            <input type="text" name="username" class="form-control form-control-user" id="exampleFirstName"
-                                   placeholder="Username">
-                        </div>
-                        <div class="form-group my-3">
-                            <input type="password" name="password" class="form-control form-control-user"
-                                   id="exampleRepeatPassword" placeholder="Password">
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-primary btn-user btn-block my-3">
-                                Đăng nhập
-                            </button>
-                        </div>
-                    </form>
-                    <hr>
-                    <div class="text-center">
-                        <p>Bạn chưa có tài khoản?
-                            <span>
-                                <a class="link-offset-2 link-underline link-underline-opacity-0 link-underline-opacity-75-hover" th:href="@{/buyer/register}" >Đăng ký!</a>
-                            </span>
-                        </p>
-
+                    <div th:if="${param.logout}" class="text-success">
+                        You have been logged out.
                     </div>
+                    <div class="form-group my-3">
+                        <input type="text" name="username" class="form-control form-control-user" id="exampleFirstName"
+                               placeholder="Username">
+                    </div>
+                    <div class="form-group my-3">
+                        <input type="password" name="password" class="form-control form-control-user"
+                               id="exampleRepeatPassword" placeholder="Password">
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary btn-user btn-block my-3">
+                            Đăng nhập
+                        </button>
+                    </div>
+                </form>
+                <hr>
+                <div class="text-center">
+                    <p>Bạn chưa có tài khoản?
+                        <span><a class="link-offset-2 link-underline link-underline-opacity-0 link-underline-opacity-75-hover" th:href="@{/buyer/register}" >Đăng ký!</a></span>
+                    </p>
                 </div>
             </div>
-<!--            <div class="col-lg-5 d-none d-lg-block rounded mx-auto">-->
-<!--                <img class="img-fluid" th:src="@{/assets/img/cabin.png}" alt="..." />-->
-<!--            </div>-->
+            <div class="col-lg-5 d-none d-lg-block rounded mx-auto">
+                <img class="img-fluid" th:src="@{/img/shoping.jpg}" alt="..." />
+            </div>
         </div>
     </div>
 </div>
