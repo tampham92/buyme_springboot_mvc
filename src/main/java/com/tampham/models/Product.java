@@ -15,4 +15,8 @@ public class Product extends BaseModel{
     @Getter
     @Setter
     private Double price;
+
+    @Getter
+    @Setter
+    private String description;
 }

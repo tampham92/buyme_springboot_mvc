@@ -29,4 +29,13 @@ public class OrderItem extends BaseModel{
     @JoinColumn(name = "order_id")
     @JsonBackReference
     private Order order;
+
+    public void calculator(){
+        double total = 0;
+        if (quantity != null && product != null){
+            total = quantity * product.getPrice();
+        }
+
+        this.total = total;
+    }
 }

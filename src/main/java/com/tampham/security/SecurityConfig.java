@@ -36,7 +36,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth ->{
-                    auth.requestMatchers("/", "/product/productList", "/buyer/register/**").permitAll();
+                    auth.requestMatchers("/", "/product/productList", "/product/detail/", "/buyer/register/**", "/order/**").permitAll();
                     auth.requestMatchers("product/create", "product/edit").hasAuthority("ADMIN");
                     auth.anyRequest().authenticated();
                 }).formLogin((form) -> form
