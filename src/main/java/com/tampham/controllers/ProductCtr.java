@@ -82,7 +82,7 @@ public class ProductCtr {
             model.addAttribute("timeLicenses", timeLicenses);
 
             OrderItemDto orderItemDto = new OrderItemDto();
-            orderItemDto.setProductId(product.getId());
+            orderItemDto.setProduct(product);
 
             model.addAttribute("orderItemDto",orderItemDto);
             return "product/product_detail";

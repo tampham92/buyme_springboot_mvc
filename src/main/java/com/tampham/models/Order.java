@@ -29,7 +29,7 @@ public class Order extends BaseModel {
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentType;
+    private PaymentType paymentType = PaymentType.OTHER;
 
     @Getter
     @Setter
@@ -41,4 +41,10 @@ public class Order extends BaseModel {
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<OrderItem> items = new HashSet<>();
+
+    public void calculator(){
+        for (OrderItem item : getItems()){
+            this.amount += item.getTotal();
+        }
+    }
 }

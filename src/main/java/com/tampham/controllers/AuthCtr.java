@@ -62,6 +62,14 @@ public class AuthCtr {
         return "auth/login";
     }
 
+    @GetMapping("/buyer/logout")
+    public String performLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
+        logoutHandler.logout(request, response, authentication);
+
+        return "redirect:/product/productList";
+    }
+
     private Map<String, String> validateRegister(RegisterDto form){
         Map<String, String> error = new HashMap<>();
 
@@ -81,13 +89,5 @@ public class AuthCtr {
         }
 
         return error;
-    }
-
-    @GetMapping("/buyer/logout")
-    public String performLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
-        SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
-        logoutHandler.logout(request, response, authentication);
-
-        return "redirect:/product/productList";
     }
 }

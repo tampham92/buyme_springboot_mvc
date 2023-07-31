@@ -13,11 +13,12 @@ public class OrderItemDto {
 
     @Getter
     @Setter
-    private Long productId;
+    private Product product;
 
     public OrderItemDto(){}
-    public OrderItemDto(TimeLicense timeLicense, Long productId){
+
+    public OrderItemDto(TimeLicense timeLicense, Product product){
         this.timeLicense = timeLicense;
-        this.productId = productId;
+        this.product = product;
     }
 }
