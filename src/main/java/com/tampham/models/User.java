@@ -1,14 +1,13 @@
 package com.tampham.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Entity này sẽ cần implements UserDetail của spring security, để tạo ra thông tin username sử dụng cho loadUsername tại
@@ -37,6 +36,12 @@ public class User extends BaseModel implements UserDetails {
     @Getter
     @Setter
     private String phoneNumber;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JsonManagedReference
+    private List<Order> orders = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

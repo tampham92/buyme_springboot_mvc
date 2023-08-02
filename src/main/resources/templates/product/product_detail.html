@@ -23,9 +23,9 @@
 <!--                    Value post to order controller-->
                     <div class="col-sm-3">
                         <span>Thời gian mua: </span>
-                        <select th:field="*{timeLicense}">
+                        <select th:field="*{quantity}">
                             <option th:each="value : ${timeLicenses}"
-                                    th:value="${value}"
+                                    th:value="${value.numberOfYear}"
                                     th:text="${value.label}"/>
                         </select>
                     </div>

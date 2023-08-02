@@ -6,16 +6,17 @@ import com.tampham.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.aspectj.weaver.ast.Or;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
 public class Order extends BaseModel {
     @Getter
     @Setter
-    private String oderCode;
+    private String orderCode;
 
     @Getter
     @Setter
@@ -23,13 +24,14 @@ public class Order extends BaseModel {
 
     @Getter
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Getter
     @Setter
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentType = PaymentType.OTHER;
+    private PaymentType paymentType;
 
     @Getter
     @Setter
@@ -40,7 +42,14 @@ public class Order extends BaseModel {
     @Setter
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<OrderItem> items = new HashSet<>();
+    private List<OrderItem> items = new ArrayList<>();
+
+    public Order(){}
+    public Order (User user, OrderItem item, PaymentType paymentType){
+        this.user = user;
+        this.getItems().add(item);
+        this.paymentType = paymentType;
+    }
 
     public void calculator(){
         for (OrderItem item : getItems()){

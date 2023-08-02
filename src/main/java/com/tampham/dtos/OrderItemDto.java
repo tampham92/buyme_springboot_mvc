@@ -9,7 +9,7 @@ public class OrderItemDto {
 
     @Getter
     @Setter
-    private TimeLicense timeLicense;
+    private Double quantity;
 
     @Getter
     @Setter
@@ -17,8 +17,8 @@ public class OrderItemDto {
 
     public OrderItemDto(){}
 
-    public OrderItemDto(TimeLicense timeLicense, Product product){
-        this.timeLicense = timeLicense;
+    public OrderItemDto(Double quantity, Product product){
+        this.quantity = quantity;
         this.product = product;
     }
 }

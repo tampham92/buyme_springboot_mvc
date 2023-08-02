@@ -45,13 +45,13 @@ public class AuthCtr {
     @PostMapping("/buyer/register")
     public String createUser(RegisterDto form, Model model) {
         Map<String, String> errors = validateRegister(form);
-        if (errors.isEmpty()){
-            authService.registerUser(form);
-            return "auth/login";
+        if (!errors.isEmpty()){
+            model.addAttribute("errors", errors);
+            return "auth/register";
         }
 
-        model.addAttribute("errors", errors);
-        return "auth/register";
+        authService.registerUser(form);
+        return "auth/login";
     }
 
     /**
