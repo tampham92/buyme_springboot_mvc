@@ -1,6 +1,6 @@
 package com.tampham.utils;
 
-public final class RandomString {
+public final class RandomStringUtils {
     public static String getAlphaNumericString(int n) {
         String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"

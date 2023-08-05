@@ -6,7 +6,6 @@ import com.tampham.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.weaver.ast.Or;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +21,33 @@ public class Order extends BaseModel {
     @Setter
     private double amount;
 
+    /**
+     * Thông tin tk mua và người mua
+     * */
     @Getter
     @Setter
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Getter
+    @Setter
+    private String buyerName;
+
+    @Getter
+    @Setter
+    private String buyerPhone;
+
+    @Getter
+    @Setter
+    private String buyerAddress;
+
+    @Getter
+    @Setter
+    private String buyerEmail;
+    /**
+     * Thông tin thanh toán, danh sách sản phẩm và trạng thái đơn hàng
+     * */
 
     @Getter
     @Setter
@@ -43,13 +64,6 @@ public class Order extends BaseModel {
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> items = new ArrayList<>();
-
-    public Order(){}
-    public Order (User user, OrderItem item, PaymentType paymentType){
-        this.user = user;
-        this.getItems().add(item);
-        this.paymentType = paymentType;
-    }
 
     public void calculator(){
         for (OrderItem item : getItems()){
