@@ -7,5 +7,5 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public interface PaymentService {
-    String createPayment(long amount, String orderInfo, String orderId) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException;
+    Object createPayment(long amount, String orderInfo, String orderId) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException;
 }

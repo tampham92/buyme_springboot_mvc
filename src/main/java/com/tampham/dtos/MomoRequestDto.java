@@ -14,10 +14,6 @@ public class MomoRequestDto {
 
     @Getter
     @Setter
-    private String storeId;
-
-    @Getter
-    @Setter
     private String requestId;
 
     @Getter

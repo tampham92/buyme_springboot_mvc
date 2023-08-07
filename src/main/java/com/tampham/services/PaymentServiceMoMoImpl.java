@@ -3,6 +3,7 @@ package com.tampham.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tampham.dtos.MomoRequestDto;
+import com.tampham.dtos.MomoResponseDto;
 import com.tampham.utils.HashUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,45 +21,47 @@ public class PaymentServiceMoMoImpl implements PaymentService {
     private String URL_MOMO  = "https://test-payment.momo.vn/v2/gateway/api";
     private static String ACCESS_KEY = "sFrob8BUacPnu2xX";
     private static String PARTNER_CODE = "MOMOPHWT20210517";
-
     private static String SECRET_KEY = "lwCq1WBMd8vvX2rfsW7nwHyfNIATQGBW";
 
     @Override
-    public String createPayment(long amount, String orderId, String orderInfo) throws JsonProcessingException {
+    public Object createPayment(long amount, String orderId, String orderInfo) throws JsonProcessingException {
 
-        MomoRequestDto requestBody = getMomoRequestDto(amount, orderId, orderInfo);
+        MomoRequestDto payload = getMomoRequestDto(amount, orderId, orderInfo);
 
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(requestBody);
+        String dataJson = mapper.writeValueAsString(payload);
         HttpClient client = HttpClient.newHttpClient();
 
-        String resp = null;
+        MomoResponseDto momoResponse = new MomoResponseDto();
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(URL_MOMO+"/create"))
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .POST(HttpRequest.BodyPublishers.ofString(dataJson))
                     .headers("Content-Type", "application/json")
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response);
-            resp = mapper.readValue(response.body(), String.class);
+            momoResponse = mapper.readValue(response.body(), MomoResponseDto.class);
         } catch (InterruptedException | URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 
-        return resp;
+        return momoResponse;
     }
 
     private static MomoRequestDto getMomoRequestDto(long amount, String orderId, String orderInfo) {
         HashMap<String, String> extra = new HashMap<>();
-        String redirectUrl = "http://localhost:8181/order/orderList";
+
         extra.put("username", "typing");
         String base64ExtraData = Base64.getEncoder().encodeToString(extra.toString().getBytes());
+        String redirectUrl = "http://localhost:8181/order/orderList";
+        String signature = createRawSignature(amount, orderId, orderInfo, base64ExtraData, redirectUrl, redirectUrl,"captureWallet" );
+
         MomoRequestDto requestBody = new MomoRequestDto();
         requestBody.setAmount(amount);
         requestBody.setOrderId(orderId);
         requestBody.setRequestId(orderId);
+        requestBody.setExtraData(base64ExtraData);
         requestBody.setAutoCapture(true);
         requestBody.setRedirectUrl(redirectUrl);
         requestBody.setIpnUrl(redirectUrl);
@@ -67,8 +70,6 @@ public class PaymentServiceMoMoImpl implements PaymentService {
         requestBody.setPartnerName("Test");
         requestBody.setRequestType("captureWallet");
         requestBody.setLang("vi");
-
-        String signature = createRawSignature(amount, orderId, orderInfo, base64ExtraData, redirectUrl, redirectUrl,"captureWallet" );
         requestBody.setSignature(signature);
 
         return requestBody;

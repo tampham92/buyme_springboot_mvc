@@ -1,6 +1,7 @@
 package com.tampham.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.tampham.dtos.MomoResponseDto;
 import com.tampham.dtos.OrderItemDto;
 import com.tampham.enums.OrderStatus;
 import com.tampham.enums.PaymentType;
@@ -148,9 +149,8 @@ public class OrderCtr {
             order.setPaymentType(form.getPaymentType());
             order.setStatus(OrderStatus.PENDING);
             String orderInfo = "Mua goi " + order.getItems().get(0).getProduct().getProductName();
-            String response = paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
-            System.out.println(response);
-
+            MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), "TM-" + order.getOrderCode().toUpperCase(), orderInfo);
+            return "redirect:" + response.getPayUrl();
         }
 
         orderRepository.save(order);
