@@ -15,12 +15,12 @@
     <div class="row mt-3">
         <div class="card mt-3">
             <div class="card-body elegant-color white-text rounded-bottom">
-                <form method="post" th:action="@{/order/checkout}" th:object="${orderItemDto}">
                     <h5 class="card-title" th:text="${product.productName}" />
                     <p class="card-text white-text" th:text="${product.description}" />
                     <p class="card-text white-text">Giá: <span th:text="${product.price}" /> VND</p>
 
 <!--                    Value post to order controller-->
+                <form method="post" th:action="@{/order/checkout}" th:object="${orderItemDto}">
                     <div class="col-sm-3">
                         <span>Thời gian mua: </span>
                         <select th:field="*{quantity}">

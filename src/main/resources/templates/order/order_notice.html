@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Buy me</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="d-flex flex-column h-100">
+
+<div th:replace="~{layout/header :: header}"> </div>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h2 th:if="${successMsg}" class="text-success text-center">
+            <span>Cảm ơn bạn </span> [[${successMsg}]]
+        </h2>
+    </div>
+    <div th:if="${errorMsg}" class="text-danger text-center">
+        [[${errorMsg}]]
+    </div>
+    <div class="mt-4 d-flex justify-content-center">
+        <div class="card p-4 mt-3">
+            <div class="first d-flex justify-content-between align-items-center mb-3">
+                <div class="info">
+                    <span class="d-block name text-primary" th:text="${orderInfo.buyerName}"/>
+                    <b class="text-secondary">Mã đơn hàng <span th:text="${orderInfo.orderCode}"/></b>
+
+                </div>
+                <img src="https://i.imgur.com/NiAVkEw.png" width="40"/>
+            </div>
+            <div class="detail">
+                <span class="d-block summery">Your order has been dispatched. we are delivering you order.</span>
+            </div>
+            <hr>
+            <div class="text">
+                <span class="d-block new mb-1" >Alex Dorlew</span>
+            </div>
+            <span class="d-block address mb-3">672 Conaway Street Bryantiville Massachusetts 02327</span>
+            <div class="  money d-flex flex-row mt-2 align-items-center">
+                <img src="https://i.imgur.com/ppwgjMU.png" width="20" />
+
+                <span class="ml-2">Cash on Delivery</span>
+
+            </div>
+            <div class="last d-flex align-items-center mt-3">
+                <span class="address-line">CHANGE MY DELIVERY ADDRESS</span>
+
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-2" >
+        <a class="btn btn-danger" th:href="@{/order/orderList}">Quản lý đơn hàng</a>
+    </div>
+</div>
+
+<div  th:replace="~{layout/footer :: footer}"> </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

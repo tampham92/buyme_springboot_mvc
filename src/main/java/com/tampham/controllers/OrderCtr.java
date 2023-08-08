@@ -14,6 +14,7 @@ import com.tampham.repository.UserRepository;
 import com.tampham.services.PaymentService;
 import com.tampham.utils.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -103,7 +106,6 @@ public class OrderCtr {
     @PostMapping("/order/payment")
     public String doPayment(Order form, Model model) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         Map<String, String> errors = validate(form);
-        String successMsg;
 
         if (!errors.isEmpty()){
             model.addAttribute("errors", errors);
@@ -129,8 +131,10 @@ public class OrderCtr {
         order.setUser(user);
 
         order.setItems(items);
-        order.setOrderCode(RandomStringUtils.getAlphaNumericString(5));
+        String orderCode = RandomStringUtils.getAlphaNumericString(5);
+        order.setOrderCode("TM-" + orderCode.toUpperCase());
         order.calculator(); // Tính tổng lại trước khi lưu đơn
+        String message;
 
         // Nếu là phương thức thanh toán OTHER thì lưu đơn hàng và trả về success
         if (form.getPaymentType().equals(PaymentType.OTHER)){
@@ -138,23 +142,62 @@ public class OrderCtr {
             order.setStatus(OrderStatus.SUCCESS);
             orderRepository.save(order);
 
-            successMsg = "Đã đặt hàng";
-            model.addAttribute("successMsg", successMsg);
+            message = "đã đặt hàng !";
+            model.addAttribute("orderInfo", order);
+            model.addAttribute("successMsg", message);
 
-            return "order/success_order_form";
+            orderNotice(order, model);
+
+            return "redirect:/order/orderNotice";
         }
 
-        // Nếu là phương thức thanh toán MOMO thì gọi api thanh toán momo
+        // Nếu là phương thức thanh toán MOMO thì gọi service thanh toán momo
         if (form.getPaymentType().equals(PaymentType.MOMO)){
             order.setPaymentType(form.getPaymentType());
             order.setStatus(OrderStatus.PENDING);
+            orderRepository.save(order);
+
             String orderInfo = "Mua goi " + order.getItems().get(0).getProduct().getProductName();
-            MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), "TM-" + order.getOrderCode().toUpperCase(), orderInfo);
+            MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
+            if (response.getPayUrl() == null){
+                message = "Thanh toán tất bại";
+                model.addAttribute("errorMsg", message);
+                return "order/order_notice";
+            }
             return "redirect:" + response.getPayUrl();
         }
 
-        orderRepository.save(order);
         return "redirect:/order/orderList";
+    }
+
+    @GetMapping("/order/orderNotice")
+    public String orderNotice(Order order, Model model){
+        return "order/order_notice";
+    }
+
+    @PostMapping("/order/resultPayment/momo")
+    public ResponseEntity<?> getResultPaymentMomo(@RequestBody MomoResponseDto momoResponse){
+        System.out.println("Post - " + momoResponse.getMessage());
+        return ResponseEntity.status(200).body("OK");
+    }
+
+    @GetMapping("/order/resultPayment/momo")
+    public String getResultPaymentMomo(@RequestParam("partnerCode")String partnerCode,
+                                       @RequestParam("orderId")String orderId,
+                                       @RequestParam("requestId")String requestId,
+                                       @RequestParam("amount")Long amount,
+                                       @RequestParam("orderInfo")String orderInfo,
+                                       @RequestParam("transId")Long transId,
+                                       @RequestParam("resultCode")int resultCode,
+                                       @RequestParam("message")String message,
+                                       @RequestParam("payType")String payType,
+                                       @RequestParam("responseTime")Long responseTime,
+                                       @RequestParam("extraData")String extraData,
+                                       @RequestParam("signature")String signature, Model model){
+        System.out.println(resultCode);
+
+        model.addAttribute("errorMsg", message);
+        return "order/order_notice";
     }
 
     private Map<String, String> validate(Order form){

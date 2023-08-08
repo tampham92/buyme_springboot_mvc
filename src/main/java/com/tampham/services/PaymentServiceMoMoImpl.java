@@ -31,7 +31,6 @@ public class PaymentServiceMoMoImpl implements PaymentService {
         ObjectMapper mapper = new ObjectMapper();
         String dataJson = mapper.writeValueAsString(payload);
         HttpClient client = HttpClient.newHttpClient();
-
         MomoResponseDto momoResponse = new MomoResponseDto();
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -54,8 +53,9 @@ public class PaymentServiceMoMoImpl implements PaymentService {
 
         extra.put("username", "typing");
         String base64ExtraData = Base64.getEncoder().encodeToString(extra.toString().getBytes());
-        String redirectUrl = "http://localhost:8181/order/orderList";
-        String signature = createRawSignature(amount, orderId, orderInfo, base64ExtraData, redirectUrl, redirectUrl,"captureWallet" );
+        String ipnUrl = "http://localhost:8181/order/resultPayment/momo";
+        String redirectUrl = "http://localhost:8181/order/resultPayment/momo";
+        String signature = createRawSignature(amount, orderId, orderInfo, base64ExtraData, ipnUrl, redirectUrl,"captureWallet" );
 
         MomoRequestDto requestBody = new MomoRequestDto();
         requestBody.setAmount(amount);
@@ -64,7 +64,7 @@ public class PaymentServiceMoMoImpl implements PaymentService {
         requestBody.setExtraData(base64ExtraData);
         requestBody.setAutoCapture(true);
         requestBody.setRedirectUrl(redirectUrl);
-        requestBody.setIpnUrl(redirectUrl);
+        requestBody.setIpnUrl(ipnUrl);
         requestBody.setOrderInfo(orderInfo);
         requestBody.setPartnerCode(PARTNER_CODE);
         requestBody.setPartnerName("Test");
