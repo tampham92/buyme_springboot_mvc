@@ -12,28 +12,26 @@
 <div th:replace="~{layout/header :: header}"> </div>
 
 <div class="container">
-    <div class="row mt-3">
-        <div class="card mt-3">
-            <div class="card-body elegant-color white-text rounded-bottom">
-                    <h5 class="card-title" th:text="${product.productName}" />
-                    <p class="card-text white-text" th:text="${product.description}" />
-                    <p class="card-text white-text">Giá: <span th:text="${product.price}" /> VND</p>
+    <div class="mt-3 d-flex justify-content-center">
+        <div class="card p-4 mt-3 white-text">
+            <h5 class="card-title text-primary" th:text="${product.productName}" />
+            <p class="card-text white-text" th:text="${product.description}" />
+            <p class="card-text white-text">Giá: <span th:text="${product.price}" /> VND</p>
 
-<!--                    Value post to order controller-->
-                <form method="post" th:action="@{/order/checkout}" th:object="${orderItemDto}">
-                    <div class="col-sm-3">
-                        <span>Thời gian mua: </span>
-                        <select th:field="*{quantity}">
-                            <option th:each="value : ${timeLicenses}"
-                                    th:value="${value.numberOfYear}"
-                                    th:text="${value.label}"/>
-                        </select>
-                    </div>
-                    <input type="hidden" th:field="*{product}"/>
-                    <hr class="hr-light">
-                    <button class="btn btn-primary" type="submit">Mua hàng</button>
-                </form>
-            </div>
+            <!--                    Value post to order controller-->
+            <form method="post" th:action="@{/order/checkout}" th:object="${orderItemDto}">
+                <div class="col-sm-3">
+                    <span>Thời gian mua: </span>
+                    <select th:field="*{quantity}">
+                        <option th:each="value : ${timeLicenses}"
+                                th:value="${value.numberOfYear}"
+                                th:text="${value.label}"/>
+                    </select>
+                </div>
+                <input type="hidden" th:field="*{product}"/>
+                <hr class="hr-light">
+                <button class="btn btn-primary" type="submit">Mua hàng</button>
+            </form>
         </div>
     </div>
 </div>

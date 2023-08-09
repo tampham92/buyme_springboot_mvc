@@ -3,7 +3,7 @@ package com.tampham.enums;
 import lombok.Getter;
 
 public enum OrderStatus {
-    SUCCESS("Đã đặt hàng"),
+    SUCCESS("Đã mua hàng"),
     CANClED("Đã huỷ"),
     PENDING("Chờ thanh toán");
 

@@ -15,8 +15,8 @@
     <div class="text-center mt-2">
         <h2>Thông tin đơn hàng</h2>
     </div>
-    <div th:if="${successMsg}" class="salert p-2 alert-success text-center">
-        [[${successMsg}]]
+    <div th:if="${errorMsg}" class="salert p-2 alert-danger text-center">
+        [[${errorMsg}]]
     </div>
     <form class="mt-2" th:action="@{/order/payment}" th:object="${order}" method="post">
         <div class="col-md-8 order-md-1">

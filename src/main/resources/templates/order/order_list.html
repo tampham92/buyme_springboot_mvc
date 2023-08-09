@@ -29,7 +29,7 @@
             <td th:text="${item.orderCode}"/>
             <td th:text="${item.items}"/>
             <td th:text="${item.amount}"/>
-            <td th:text="${item.status}"/>
+            <td th:text="${item.status.value}"/>
             <td sec:authorize="hasAuthority('ADMIN')" th:text="${item.user.fullName}"/>
             <td>...</td>
         </tbody>

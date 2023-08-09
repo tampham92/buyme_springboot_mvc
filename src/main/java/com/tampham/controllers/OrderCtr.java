@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
@@ -104,9 +105,8 @@ public class OrderCtr {
     }
 
     @PostMapping("/order/payment")
-    public String doPayment(Order form, Model model) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+    public String doPayment(Order form, Model model, RedirectAttributes attributes) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         Map<String, String> errors = validate(form);
-
         if (!errors.isEmpty()){
             model.addAttribute("errors", errors);
             return "order/checkout_form";
@@ -134,7 +134,6 @@ public class OrderCtr {
         String orderCode = RandomStringUtils.getAlphaNumericString(5);
         order.setOrderCode("TM-" + orderCode.toUpperCase());
         order.calculator(); // Tính tổng lại trước khi lưu đơn
-        String message;
 
         // Nếu là phương thức thanh toán OTHER thì lưu đơn hàng và trả về success
         if (form.getPaymentType().equals(PaymentType.OTHER)){
@@ -142,12 +141,7 @@ public class OrderCtr {
             order.setStatus(OrderStatus.SUCCESS);
             orderRepository.save(order);
 
-            message = "đã đặt hàng !";
-            model.addAttribute("orderInfo", order);
-            model.addAttribute("successMsg", message);
-
-            orderNotice(order, model);
-
+            attributes.addAttribute("orderInfo", order);
             return "redirect:/order/orderNotice";
         }
 
@@ -160,9 +154,9 @@ public class OrderCtr {
             String orderInfo = "Mua goi " + order.getItems().get(0).getProduct().getProductName();
             MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
             if (response.getPayUrl() == null){
-                message = "Thanh toán tất bại";
+                String message = "Có lỗi xảy ra vui lòng chọn phương thức thanh toán khác";
                 model.addAttribute("errorMsg", message);
-                return "order/order_notice";
+                return "order/checkout_form";
             }
             return "redirect:" + response.getPayUrl();
         }
@@ -171,7 +165,8 @@ public class OrderCtr {
     }
 
     @GetMapping("/order/orderNotice")
-    public String orderNotice(Order order, Model model){
+    public String orderNotice(@RequestParam("orderInfo") Order order, Model model){
+        model.addAttribute("orderInfo", order);
         return "order/order_notice";
     }
 
@@ -193,11 +188,16 @@ public class OrderCtr {
                                        @RequestParam("payType")String payType,
                                        @RequestParam("responseTime")Long responseTime,
                                        @RequestParam("extraData")String extraData,
-                                       @RequestParam("signature")String signature, Model model){
-        System.out.println(resultCode);
+                                       @RequestParam("signature")String signature, RedirectAttributes attributes){
 
-        model.addAttribute("errorMsg", message);
-        return "order/order_notice";
+
+        Order order = orderRepository.findByOrderCode(orderId);
+        if (resultCode == 0){
+            order.setStatus(OrderStatus.SUCCESS);
+            orderRepository.save(order);
+        }
+        attributes.addAttribute("orderInfo", order);
+        return "redirect:/order/orderNotice";
     }
 
     private Map<String, String> validate(Order form){
