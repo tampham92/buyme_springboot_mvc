@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tampham.dtos.MomoRequestDto;
 import com.tampham.dtos.MomoResponseDto;
 import com.tampham.utils.HashUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,13 +20,17 @@ import java.util.HashMap;
 @Service
 public class PaymentServiceMoMoImpl implements PaymentService {
     private String URL_MOMO  = "https://test-payment.momo.vn/v2/gateway/api";
-    private static String ACCESS_KEY = "sFrob8BUacPnu2xX";
-    private static String PARTNER_CODE = "MOMOPHWT20210517";
-    private static String SECRET_KEY = "lwCq1WBMd8vvX2rfsW7nwHyfNIATQGBW";
+    @Value("${momo.ACCESS_KEY}")
+    private String ACCESS_KEY;
+
+    @Value("${momo.PARTNER_CODE}")
+    private String PARTNER_CODE;
+
+    @Value("${momo.SECRET_KEY}")
+    private String SECRET_KEY;
 
     @Override
     public Object createPayment(long amount, String orderId, String orderInfo) throws JsonProcessingException {
-
         MomoRequestDto payload = getMomoRequestDto(amount, orderId, orderInfo);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -48,11 +53,11 @@ public class PaymentServiceMoMoImpl implements PaymentService {
         return momoResponse;
     }
 
-    private static MomoRequestDto getMomoRequestDto(long amount, String orderId, String orderInfo) {
+    private MomoRequestDto getMomoRequestDto(long amount, String orderId, String orderInfo) {
         HashMap<String, String> extra = new HashMap<>();
-
         extra.put("username", "typing");
         String base64ExtraData = Base64.getEncoder().encodeToString(extra.toString().getBytes());
+
         String ipnUrl = "http://localhost:8181/order/resultPayment/momo";
         String redirectUrl = "http://localhost:8181/order/resultPayment/momo";
         String signature = createRawSignature(amount, orderId, orderInfo, base64ExtraData, ipnUrl, redirectUrl,"captureWallet" );
@@ -76,7 +81,7 @@ public class PaymentServiceMoMoImpl implements PaymentService {
     }
 
 
-    private static String createRawSignature(long amount, String orderId,
+    private String createRawSignature(long amount, String orderId,
                                              String orderInfo, String extraData,
                                              String ipnUrl, String redirectUrl,
                                              String requestType) {

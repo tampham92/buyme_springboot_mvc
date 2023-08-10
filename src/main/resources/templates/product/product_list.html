@@ -11,21 +11,30 @@
 
 <div th:replace="~{layout/header :: header}"> </div>
 
-<div class="container">
-    <div class="my-2" sec:authorize="hasAuthority('ADMIN')">
-        <a class="btn btn-primary" th:href="@{/product/create}">Thêm mới</a>
-    </div>
-    <div class="row mt-3">
-        <div class="col-sm-6" th:each="product : ${products}">
-            <div class="card mt-3">
-                <div class="card-body elegant-color white-text rounded-bottom">
-                    <img class="card-img-top" th:src="@{/img/cake.png}" alt="Card image cap">
-                    <h5 class="card-title mt-1" th:text="${product.productName}" />
-                    <p class="card-text white-text" th:text="${product.description}" />
-                    <p class="card-text white-text">Giá: <span th:text="${product.price}" /> VND</p>
-                    <hr class="hr-light">
-                    <div>
-                        <a class="btn btn-primary" th:href="@{/product/detail/(id=${product.id})}">Chi tiết</a>
+<section style="background-color: #eee;">
+    <div class="text-center container py-5">
+        <h4 class="mb-3"><strong>Danh sách sản phẩm</strong></h4>
+        <div class="my-2" sec:authorize="hasAuthority('ADMIN')">
+            <a class="btn btn-primary" th:href="@{/product/create}">Thêm mới</a>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-12 mb-4" th:each="product : ${products}">
+                <div class="card">
+                    <div class="bg-image ripple ripple-surface ripple-surface-light"
+                         data-mdb-ripple-color="light">
+                        <a th:href="@{/product/detail/(id=${product.id})}">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/new/img(5).webp" class="w-100" />
+                        </a>
+                        <div class="d-flex justify-content-start align-items-end h-100 mt-1">
+                            <h5><span class="badge bg-primary ms-2">New</span></h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <a class="text-decoration-none" th:href="@{/product/detail/(id=${product.id})}">
+                            <h5 class="card-title mb-3" th:text="${product.productName}" />
+                        </a>
+                        <p th:text="${product.description}"/>
+                        <h6 class="mb-3" >$<span th:text="${product.price}"/></h6>
                         <a class="btn btn-secondary" sec:authorize="hasAuthority('ADMIN')"
                            th:href="@{/product/edit/(id=${product.id})}">Cập nhật</a>
                     </div>
@@ -33,8 +42,7 @@
             </div>
         </div>
     </div>
-</div>
-
+</section>
 
 <div  th:replace="~{layout/footer :: footer}"> </div>
 

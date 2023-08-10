@@ -155,7 +155,9 @@ public class OrderCtr {
             MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
             if (response.getPayUrl() == null){
                 String message = "Có lỗi xảy ra vui lòng chọn phương thức thanh toán khác";
+                List<PaymentType> paymentTypes = List.of(PaymentType.values());
                 model.addAttribute("errorMsg", message);
+                model.addAttribute("paymentTypes", paymentTypes);
                 return "order/checkout_form";
             }
             return "redirect:" + response.getPayUrl();
