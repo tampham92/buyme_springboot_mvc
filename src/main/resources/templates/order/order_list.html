@@ -24,14 +24,43 @@
                 <th scope="col">Thao tác</th>
             </tr>
         </thead>
-        <tbody class="table-success" th:each="item,iter : ${orders}">
+        <tbody class="table-success" th:each="order,iter : ${orders}">
             <td th:text="${iter.count}"/>
-            <td th:text="${item.orderCode}"/>
-            <td th:text="${item.items}"/>
-            <td th:text="${item.amount}"/>
-            <td th:text="${item.status.value}"/>
-            <td sec:authorize="hasAuthority('ADMIN')" th:text="${item.user.fullName}"/>
-            <td>...</td>
+            <td th:text="${order.orderCode}"/>
+            <td th:text="${order.items.get(0).product.productName}"/>
+            <td th:text="${order.amount}"/>
+            <td>
+                <div th:if="${order.status.name() == 'SUCCESS'}">
+                    <span th:text="${order.status.value}"></span>
+                </div>
+                <div th:if="${order.status.name() == 'PENDING'}">
+                    <span class="text-danger" th:text="${order.status.value}"></span>
+                </div>
+            </td>
+            <td sec:authorize="hasAuthority('ADMIN')" th:text="${order.user.fullName}"/>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="bi bi-list-task"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" th:if="${order.status.name() == 'SUCCESS'}"><span class="bi bi-bag-check"></span> Mua lại</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:if="${order.status.name() == 'PENDING'}" th:href="@{/order/detail/(id=${order.id})}">
+                                <span class="bi bi-wallet"></span> Thanh toán</a>
+                        </li>
+                        <li class="dropdown-item">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item"><span class="bi-box-arrow-right"></span> Chi tiết</button>
+                        </li>
+                    </ul>
+                </div>
+            </td>
         </tbody>
     </table>
 </div>

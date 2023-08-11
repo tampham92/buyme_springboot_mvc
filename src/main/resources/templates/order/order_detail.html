@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="h-100" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Buy me</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="d-flex flex-column h-100">
+
+<div th:replace="~{layout/header :: header}"> </div>
+
+<div class="container">
+    <div class="text-center mt-2">
+        <h2 class="text-success text-center">
+            Chi tiết đơn hàng
+        </h2>
+    </div>
+    <div>
+        <div class="mt-2 d-flex justify-content-center">
+            <div class="card p-4 mt-3">
+                <div class="first d-flex justify-content-between align-items-center mb-3">
+                    <div class="info">
+                        <b class="d-block name"><span class="text-primary" th:text="${orderInfo.buyerName}"/></b>
+                        <b class="text-secondary">Mã đơn hàng: <span class="text-primary" th:text="${orderInfo.orderCode}"/></b>
+                    </div>
+                </div>
+                <hr>
+                <div class="text" th:each="item, stat : *{orderInfo.items}">
+                    <li class="d-block new mb-1">
+                        Sản phẩm: <span th:text="${item.product.productName}"/>
+                    </li>
+                    <li class="d-block new mb-1">
+                        Thời gian: <span th:text="${item.quantity}"/> năm
+                    </li>
+                    <li class="d-block new mb-1">
+                        Giá sản phẩm: <span th:text="${item.total}"/>
+                    </li>
+                </div>
+                <hr>
+                <div class="  money d-flex flex-row mt-2 align-items-center">
+                    <img src="https://i.imgur.com/ppwgjMU.png" width="20" />
+                    <span class="ml-2">Tổng tiền</span>
+                </div>
+                <div class="last d-flex align-items-center mt-3">
+                    <h4 class="address-line" th:text="${orderInfo.amount}"/>
+                </div>
+                <hr>
+                <div class="last d-flex align-items-center mt-2">
+                    <span class="ml-2">Phương thức thanh toán:
+                        <label class="address-line" th:text="${orderInfo.paymentType}"/>
+                        <button type="button" class="btn btn-success btn-sm"
+                                data-bs-toggle="modal" th:attr="data-bs-target='#paymentModal'+*{orderInfo.id}">Đổi phương thức thanh toán</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-2" >
+            <a class="btn btn-danger" th:href="@{/order/orderList}">Thanh toán</a>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" th:id="*{'paymentModal'+{orderInfo.id}}" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentModalLabel">Phương thức thanh toán</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/order/updatePaymentType}" th:object="${updatePayment}" method="post">
+                    <div class="modal-body">
+                        <div class="custom-control custom-radio" th:each="type : ${paymentTypes}">
+                            <input type="radio" class="custom-control-input" th:field="*{paymentType}" th:value="${type}"/>
+                            <label class="custom-control-label" th:for="${type}" th:text="${type.value}"/>
+                        </div>
+                        <input type="hidden" th:field="*{orderId}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Lưu lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div  th:replace="~{layout/footer :: footer}"> </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+</body>
+</html>

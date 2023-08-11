@@ -3,6 +3,7 @@ package com.tampham.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tampham.dtos.MomoResponseDto;
 import com.tampham.dtos.OrderItemDto;
+import com.tampham.dtos.UpdatePaymentTypeDto;
 import com.tampham.enums.OrderStatus;
 import com.tampham.enums.PaymentType;
 import com.tampham.models.Order;
@@ -69,6 +70,31 @@ public class OrderCtr {
 
         model.addAttribute("orders", orders);
         return "order/order_list";
+    }
+
+    @GetMapping("/order/detail/")
+    public String getOrderDetail(@RequestParam("id") Long orderId, Model model){
+        if (orderId == null){
+            return "order/order_list";
+        }
+
+        Order order = orderRepository.findById(orderId).get();
+        List<PaymentType> paymentTypes = List.of(PaymentType.values());
+
+        model.addAttribute("paymentTypes", paymentTypes);
+        model.addAttribute("updatePayment", new UpdatePaymentTypeDto(order.getId(), order.getPaymentType()));
+        model.addAttribute("orderInfo", order);
+        return "order/order_detail";
+    }
+
+    @PostMapping("/order/updatePaymentType")
+    public String updatePaymentType(UpdatePaymentTypeDto form, RedirectAttributes attributes){
+        Order order = orderRepository.findById(form.getOrderId()).get();
+        order.setPaymentType(form.getPaymentType());
+        orderRepository.save(order);
+
+        attributes.addAttribute("id", order.getId());
+        return "redirect:/order/detail/";
     }
 
     @PostMapping("/order/checkout")
