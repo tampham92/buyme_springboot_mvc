@@ -33,7 +33,7 @@
                 <div th:if="${order.status.name() == 'SUCCESS'}">
                     <span th:text="${order.status.value}"></span>
                 </div>
-                <div th:if="${order.status.name() == 'PENDING'}">
+                <div th:if="${order.status.name() == 'PENDING' || order.status.name() == 'CANClED'}">
                     <span class="text-danger" th:text="${order.status.value}"></span>
                 </div>
             </td>
@@ -46,17 +46,11 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" th:if="${order.status.name() == 'SUCCESS'}"><span class="bi bi-bag-check"></span> Mua lại</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" th:if="${order.status.name() == 'PENDING'}" th:href="@{/order/detail/(id=${order.id})}">
+                            <a class="dropdown-item" th:if="${order.status.name() == 'PENDING'}" th:href="@{/order/detail/(id=${hashIdService.endCodeId(order.id)})}">
                                 <span class="bi bi-wallet"></span> Thanh toán</a>
                         </li>
-                        <li class="dropdown-item">
-                            <hr class="dropdown-divider">
-                        </li>
                         <li>
-                            <button class="dropdown-item"><span class="bi-box-arrow-right"></span> Chi tiết</button>
+                            <a class="dropdown-item" th:href="@{/order/detail/(id=${hashIdService.endCodeId(order.id)})}"><span class="bi-box-arrow-right"></span> Chi tiết</a>
                         </li>
                     </ul>
                 </div>

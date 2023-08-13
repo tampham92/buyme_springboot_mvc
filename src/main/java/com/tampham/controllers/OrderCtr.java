@@ -12,8 +12,10 @@ import com.tampham.models.User;
 import com.tampham.repository.OrderRepository;
 import com.tampham.repository.ProductRepository;
 import com.tampham.repository.UserRepository;
+import com.tampham.services.HashIdService;
 import com.tampham.services.PaymentService;
 import com.tampham.utils.RandomStringUtils;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -46,6 +48,12 @@ public class OrderCtr {
     @Autowired
     private PaymentService paymentService;
 
+    @Autowired
+    private HashIdService hashIdService;
+
+    @Getter
+    private List<PaymentType> paymentTypes = List.of(PaymentType.values());
+
     @GetMapping("/order/orderList")
     public String getAllOrder(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,32 +76,41 @@ public class OrderCtr {
             orders = orderRepository.findAll();
         }
 
+        model.addAttribute("hashIdService", hashIdService);
         model.addAttribute("orders", orders);
         return "order/order_list";
     }
 
     @GetMapping("/order/detail/")
-    public String getOrderDetail(@RequestParam("id") Long orderId, Model model){
-        if (orderId == null){
+    public String getOrderDetail(@RequestParam("id") String orderId, Model model){
+        if (orderId.isEmpty()){
             return "order/order_list";
         }
 
-        Order order = orderRepository.findById(orderId).get();
-        List<PaymentType> paymentTypes = List.of(PaymentType.values());
+        long id = hashIdService.deCodeId(orderId);
+        Order order = orderRepository.findById(id).get();
 
         model.addAttribute("paymentTypes", paymentTypes);
-        model.addAttribute("updatePayment", new UpdatePaymentTypeDto(order.getId(), order.getPaymentType()));
+        model.addAttribute("updatePayment", new UpdatePaymentTypeDto(hashIdService.endCodeId(order.getId()), order.getPaymentType()));
         model.addAttribute("orderInfo", order);
+        model.addAttribute("hashIdService", hashIdService);
         return "order/order_detail";
     }
 
+    /**
+     * Update lại phương thức thanh toán nếu đơn hàng chưa thanh toán đơn và muốn đổi phương thức thanh toán khác.
+     * Sau khi update paymentType thì redirect lại đúng thông tin order cho client để tiến hành thanh toán
+     * @param: paymentType
+     * @param: orderId
+     * */
     @PostMapping("/order/updatePaymentType")
     public String updatePaymentType(UpdatePaymentTypeDto form, RedirectAttributes attributes){
-        Order order = orderRepository.findById(form.getOrderId()).get();
+        long orderId = hashIdService.deCodeId(form.getOrderId());
+        Order order = orderRepository.findById(orderId).get();
         order.setPaymentType(form.getPaymentType());
         orderRepository.save(order);
 
-        attributes.addAttribute("id", order.getId());
+        attributes.addAttribute("id", form.getOrderId());
         return "redirect:/order/detail/";
     }
 
@@ -121,8 +138,6 @@ public class OrderCtr {
             order.setPaymentType(PaymentType.OTHER);
             order.calculator(); // tính toán để lấy giá trị amount hiển thị lên form
 
-            List<PaymentType> paymentTypes = List.of(PaymentType.values());
-
             model.addAttribute("paymentTypes", paymentTypes);
             model.addAttribute("order", order);
         }
@@ -130,6 +145,10 @@ public class OrderCtr {
         return "order/checkout_form";
     }
 
+    /**
+    * Route này thực hiện kiểm tra phương thức thanh toán, và lưu đơn hàng
+    * @param: orderForm
+    * */
     @PostMapping("/order/payment")
     public String doPayment(Order form, Model model, RedirectAttributes attributes) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         Map<String, String> errors = validate(form);
@@ -157,8 +176,7 @@ public class OrderCtr {
         order.setUser(user);
 
         order.setItems(items);
-        String orderCode = RandomStringUtils.getAlphaNumericString(5);
-        order.setOrderCode("TM-" + orderCode.toUpperCase());
+        order.setOrderCode("TM-" + RandomStringUtils.getAlphaNumericString(5).toUpperCase());
         order.calculator(); // Tính tổng lại trước khi lưu đơn
 
         // Nếu là phương thức thanh toán OTHER thì lưu đơn hàng và trả về success
@@ -167,7 +185,7 @@ public class OrderCtr {
             order.setStatus(OrderStatus.SUCCESS);
             orderRepository.save(order);
 
-            attributes.addAttribute("orderInfo", order);
+            attributes.addAttribute("orderId", hashIdService.endCodeId(order.getId()));
             return "redirect:/order/orderNotice";
         }
 
@@ -181,7 +199,6 @@ public class OrderCtr {
             MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
             if (response.getPayUrl() == null){
                 String message = "Có lỗi xảy ra vui lòng chọn phương thức thanh toán khác";
-                List<PaymentType> paymentTypes = List.of(PaymentType.values());
                 model.addAttribute("errorMsg", message);
                 model.addAttribute("paymentTypes", paymentTypes);
                 return "order/checkout_form";
@@ -192,18 +209,46 @@ public class OrderCtr {
         return "redirect:/order/orderList";
     }
 
-    @GetMapping("/order/orderNotice")
-    public String orderNotice(@RequestParam("orderInfo") Order order, Model model){
-        model.addAttribute("orderInfo", order);
-        return "order/order_notice";
+    @GetMapping("/order/rePayment/")
+    public String updateOrder(@RequestParam("id") String orderId, RedirectAttributes redirectAttributes) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
+        if (orderId.isEmpty()){
+            return "redirect:/order/orderList";
+        }
+
+        long id = hashIdService.deCodeId(orderId);
+        Order order = orderRepository.findById(id).get();
+        order.setOrderCode("TM-" + RandomStringUtils.getAlphaNumericString(5).toUpperCase());
+
+        // Cập nhật lại đơn hàng
+        if (order.getPaymentType().equals(PaymentType.MOMO)){
+            orderRepository.save(order);
+
+            String orderInfo = "Mua goi " + order.getItems().get(0).getProduct().getProductName();
+            MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
+            return "redirect:" + response.getPayUrl();
+        } else{
+            order.setStatus(OrderStatus.SUCCESS);
+            orderRepository.save(order);
+
+            redirectAttributes.addAttribute("orderId", hashIdService.endCodeId(order.getId()));
+            return "redirect:/order/orderNotice";
+        }
     }
 
+    /**
+     * route này hứng response sau khi thanh toán từ momo post qua ipn để cập nhật lại Order
+     * @param:
+     * */
     @PostMapping("/order/resultPayment/momo")
     public ResponseEntity<?> getResultPaymentMomo(@RequestBody MomoResponseDto momoResponse){
         System.out.println("Post - " + momoResponse.getMessage());
         return ResponseEntity.status(200).body("OK");
     }
 
+    /**
+    * route này hứng response sau khi thanh toán từ momo trả về để cập nhật lại Order
+    * @param:
+    * */
     @GetMapping("/order/resultPayment/momo")
     public String getResultPaymentMomo(@RequestParam("partnerCode")String partnerCode,
                                        @RequestParam("orderId")String orderId,
@@ -220,12 +265,22 @@ public class OrderCtr {
 
 
         Order order = orderRepository.findByOrderCode(orderId);
+        System.out.println(message);
+        System.out.println(resultCode);
         if (resultCode == 0){
             order.setStatus(OrderStatus.SUCCESS);
             orderRepository.save(order);
         }
-        attributes.addAttribute("orderInfo", order);
+        attributes.addAttribute("orderId", hashIdService.endCodeId(order.getId()));
         return "redirect:/order/orderNotice";
+    }
+
+    @GetMapping("/order/orderNotice")
+    public String orderNotice(@RequestParam("orderId") String orderId, Model model){
+        long id = hashIdService.deCodeId(orderId);
+        Order order = orderRepository.findById(id).get();
+        model.addAttribute("orderInfo", order);
+        return "order/order_notice";
     }
 
     private Map<String, String> validate(Order form){

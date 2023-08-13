@@ -7,7 +7,7 @@ import lombok.Setter;
 public class UpdatePaymentTypeDto {
     @Getter
     @Setter
-    private Long orderId;
+    private String orderId;
 
     @Getter
     @Setter
@@ -15,7 +15,7 @@ public class UpdatePaymentTypeDto {
 
     public UpdatePaymentTypeDto(){}
 
-    public UpdatePaymentTypeDto(Long orderId, PaymentType paymentType) {
+    public UpdatePaymentTypeDto(String orderId, PaymentType paymentType) {
         this.orderId = orderId;
         this.paymentType = paymentType;
     }

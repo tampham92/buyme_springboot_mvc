@@ -46,8 +46,8 @@
                 <div class="last d-flex align-items-center mt-3">
                     <h4 class="address-line" th:text="${orderInfo.amount}"/>
                 </div>
-                <hr>
-                <div class="last d-flex align-items-center mt-2">
+                <hr th:if="${orderInfo.status.name() == 'PENDING'}">
+                <div class="last d-flex align-items-center mt-2" th:if="${orderInfo.status.name() == 'PENDING'}">
                     <span class="ml-2">Phương thức thanh toán:
                         <label class="address-line" th:text="${orderInfo.paymentType}"/>
                         <button type="button" class="btn btn-success btn-sm"
@@ -57,7 +57,10 @@
             </div>
         </div>
         <div class="text-center mt-2" >
-            <a class="btn btn-danger" th:href="@{/order/orderList}">Thanh toán</a>
+            <a class="btn btn-danger" th:if="${orderInfo.status.name() == 'PENDING'}" th:href="@{/order/rePayment/(id=${hashIdService.endCodeId(orderInfo.id)})}">Thanh toán</a>
+        </div>
+        <div class="text-center mt-2" >
+            <a class="btn btn-danger" th:if="${orderInfo.status.name() == 'SUCCESS'}" th:href="@{/order/orderList}">Mua lại</a>
         </div>
     </div>
 
