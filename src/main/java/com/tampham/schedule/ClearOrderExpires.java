@@ -23,19 +23,15 @@ public class ClearOrderExpires {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-M-yyyy");
 
-//    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 10-20 * * *")
     public void removeOrderExpires(){
         Date currentDate = new Date();
         List<Order> orders = orderRepository.findAll();
 
         for (Order order : orders){
-//            if (order.getOrderCode().equals("TM-DQB4N")){
-////                LOGGER.info(" ss  ss" + order.getCreatedDate().getTime());
-//                int result = (int) ((currentDate.getTime() - order.getCreatedDate().getTime()) / (1000 * 60 * 60 * 24));
-//                LOGGER.info("sss " + result);
-//            }
             if (order.getStatus().equals(OrderStatus.PENDING)){
                 int result = (int) ((currentDate.getTime() - order.getCreatedDate().getTime()) / (1000 * 60 * 60 * 24));
+
                 if (result > 1){
                     order.setStatus(OrderStatus.CANClED);
                     orderRepository.save(order);

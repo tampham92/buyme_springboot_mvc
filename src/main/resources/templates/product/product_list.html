@@ -11,7 +11,7 @@
 
 <div th:replace="~{layout/header :: header}"> </div>
 
-<section style="background-color: #eee;">
+<section style="background-color: #508bfc;">
     <div class="text-center container py-5">
         <h4 class="mb-3"><strong>Danh sách sản phẩm</strong></h4>
         <div class="my-2" sec:authorize="hasAuthority('ADMIN')">
@@ -20,10 +20,9 @@
         <div class="row">
             <div class="col-lg-4 col-md-12 mb-4" th:each="product : ${products}">
                 <div class="card">
-                    <div class="bg-image ripple ripple-surface ripple-surface-light"
-                         data-mdb-ripple-color="light">
+                    <div class="bg-image">
                         <a th:href="@{/product/detail/(id=${product.id})}">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/new/img(5).webp" class="w-100" />
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/new/img(5).webp" class="w-100 rounded" />
                         </a>
                         <div class="d-flex justify-content-start align-items-end h-100 mt-1">
                             <h5><span class="badge bg-primary ms-2">New</span></h5>

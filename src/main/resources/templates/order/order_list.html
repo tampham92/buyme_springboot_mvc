@@ -11,9 +11,10 @@
 
 <div th:replace="~{layout/header :: header}"> </div>
 
-<div class="container">
-    <table class="table my-4">
-        <thead>
+<section style="background-color: #508bfc;">
+    <div class="container">
+        <table class="table my-4">
+            <thead>
             <tr class="table-primary">
                 <th scope="col">STT</th>
                 <th scope="col">Mã đơn hàng</th>
@@ -23,8 +24,8 @@
                 <th sec:authorize="hasAuthority('ADMIN')" scope="col">USER</th>
                 <th scope="col">Thao tác</th>
             </tr>
-        </thead>
-        <tbody class="table-success" th:each="order,iter : ${orders}">
+            </thead>
+            <tbody class="table-success" th:each="order,iter : ${orders}">
             <td th:text="${iter.count}"/>
             <td th:text="${order.orderCode}"/>
             <td th:text="${order.items.get(0).product.productName}"/>
@@ -55,9 +56,10 @@
                     </ul>
                 </div>
             </td>
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
+</section>
 
 <div  th:replace="~{layout/footer :: footer}"> </div>
 
