@@ -111,4 +111,13 @@ public class User extends BaseModel implements UserDetails {
         return true;
     }
 
+    public boolean hasRole(String roleName) {
+        for (Role role : this.authorities) {
+            if (role.getAuthority().equals(roleName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

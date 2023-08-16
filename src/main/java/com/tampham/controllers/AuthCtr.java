@@ -36,13 +36,13 @@ public class AuthCtr {
     @Autowired
     private UserRepository usersRepository;
 
-    @GetMapping("/buyer/register")
+    @GetMapping("/auth/register")
     public String registerUser(Model model) {
         model.addAttribute("registerDto", new RegisterDto());
         return "auth/register";
     }
 
-    @PostMapping("/buyer/register")
+    @PostMapping("/auth/register")
     public String createUser(RegisterDto form, Model model) {
         Map<String, String> errors = validateRegister(form);
         if (!errors.isEmpty()){
@@ -57,12 +57,12 @@ public class AuthCtr {
     /**
      * Login custom for login spring security
      * */
-    @GetMapping("/buyer/login")
+    @GetMapping("/auth/login")
     public String loginMe() {
         return "auth/login";
     }
 
-    @GetMapping("/buyer/logout")
+    @GetMapping("/auth/logout")
     public String performLogout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(request, response, authentication);
