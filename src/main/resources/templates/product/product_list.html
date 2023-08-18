@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout/main_layout"
-      xmlns:sec="http://www.w3.org/1999/xhtml">
+      xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="layout/main_layout">
 
 <div layout:fragment="content">
     <div class="text-center ">
         <h4 class="mb-3"><strong>Danh sách sản phẩm</strong></h4>
-        <div class="my-2" sec:authorize="hasAuthority('ADMIN')">
-            <a class="btn btn-primary" th:href="@{/product/create}">Thêm mới</a>
-        </div>
         <div class="row">
             <div class="col-lg-4 col-md-12 mb-4" th:each="product : ${products}">
                 <div class="card">
@@ -27,8 +23,6 @@
                         </a>
                         <p th:text="${product.description}"/>
                         <h6 class="mb-3" >$<span th:text="${product.price}"/></h6>
-                        <a class="btn btn-secondary" sec:authorize="hasAuthority('ADMIN')"
-                           th:href="@{/product/edit/(id=${product.id})}">Cập nhật</a>
                     </div>
                 </div>
             </div>
