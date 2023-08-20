@@ -13,7 +13,6 @@
             <th scope="col">Sản phẩm</th>
             <th scope="col">Tổng tiền</th>
             <th scope="col">Trạng thái</th>
-            <th sec:authorize="hasAuthority('ADMIN')" scope="col">USER</th>
             <th scope="col">Thao tác</th>
         </tr>
         </thead>
@@ -30,7 +29,6 @@
                 <span class="text-danger" th:text="${order.status.value}"></span>
             </div>
         </td>
-        <td sec:authorize="hasAuthority('ADMIN')" th:text="${order.user.fullName}"/>
         <td>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary dropdown-toggle"
@@ -50,5 +48,6 @@
         </td>
         </tbody>
     </table>
+    <label th:if="${orders.size == 0}">Quý khách chưa có đơn hàng nào</label>
 </div>
 </html>

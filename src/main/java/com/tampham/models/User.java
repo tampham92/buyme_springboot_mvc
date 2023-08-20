@@ -2,8 +2,10 @@ package com.tampham.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,6 +20,7 @@ import java.util.*;
 public class User extends BaseModel implements UserDetails {
     @Getter
     @Setter
+    @NotEmpty(message = "Vui lòng nhập tên")
     private String fullName;
 
     @Getter
@@ -36,6 +39,16 @@ public class User extends BaseModel implements UserDetails {
     @Getter
     @Setter
     private String phoneNumber;
+
+    @DateTimeFormat (pattern="yyyy-MM-dd")
+    @Getter
+    @Setter
+    private Date birthdate;
+
+    @Getter
+    @Setter
+    @Lob
+    private byte[] avatar;
 
     @Getter
     @Setter
@@ -119,5 +132,13 @@ public class User extends BaseModel implements UserDetails {
         }
 
         return false;
+    }
+
+    public String getAvatarBase64(){
+        if (avatar != null) {
+            return Base64.getEncoder().encodeToString(avatar);
+        } else {
+            return null;
+        }
     }
 }

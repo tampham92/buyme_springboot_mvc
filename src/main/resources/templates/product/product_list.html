@@ -11,7 +11,7 @@
                 <div class="card">
                     <div class="bg-image">
                         <a th:href="@{/product/detail/(id=${product.id})}">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/new/img(5).webp" class="w-100 rounded" />
+                            <img src="data:image;base64," th:attrappend="src=${product.image1Base64}" class="w-100 rounded" />
                         </a>
                         <div class="d-flex justify-content-start align-items-end h-100 mt-1">
                             <h5><span class="badge bg-primary ms-2">New</span></h5>

@@ -153,6 +153,7 @@ public class OrderCtr {
     public String doPayment(Order form, Model model, RedirectAttributes attributes) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, JsonProcessingException {
         Map<String, String> errors = validate(form);
         if (!errors.isEmpty()){
+            model.addAttribute("paymentTypes", paymentTypes);
             model.addAttribute("errors", errors);
             return "order/checkout_form";
         }

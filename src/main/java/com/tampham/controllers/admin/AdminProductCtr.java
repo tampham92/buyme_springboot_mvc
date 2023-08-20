@@ -1,6 +1,5 @@
 package com.tampham.controllers.admin;
 
-import com.tampham.dtos.ProductDto;
 import com.tampham.models.Product;
 import com.tampham.repository.ProductRepository;
 import jakarta.validation.Valid;
@@ -12,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class AdminProductCtr {
@@ -30,17 +31,15 @@ public class AdminProductCtr {
         return "admin/product";
     }
 
-    @GetMapping("/admin/productNew")
-    public String productNew(){
-        return "admin/product_new";
-    }
-
     @PostMapping("/admin/product/save")
-    public String createNewProduct(@Valid ProductDto form, BindingResult bindingResult){
+    public String saveProduct(@Valid Product form, BindingResult bindingResult,
+                              @RequestParam("fileImage1") MultipartFile image1,
+                              @RequestParam("fileImage2") MultipartFile image2) throws IOException {
+
         if (bindingResult.hasErrors()){
             return "admin/product_form";
         }
-
+        // Nếu có id thì cập nhật, ko thì thêm mới
         Product product;
         if (form.getId() != null){
             product = productRepository.findById(form.getId()).get();
@@ -51,6 +50,15 @@ public class AdminProductCtr {
         product.setProductName(form.getProductName());
         product.setPrice(form.getPrice());
         product.setDescription(form.getDescription());
+
+        if (image1.getSize() > 0){
+            product.setImage1(image1.getBytes());
+        }
+
+        if (image2.getSize() > 0){
+            product.setImage2(image2.getBytes());
+        }
+
         productRepository.save(product);
 
         return "redirect:/admin/products";
@@ -61,7 +69,7 @@ public class AdminProductCtr {
      * */
     @GetMapping("/admin/product/create")
     public String getFormProduct(Model model){
-        model.addAttribute("productDto", new ProductDto());
+        model.addAttribute("product", new Product());
         return "admin/product_form";
     }
 
@@ -70,10 +78,9 @@ public class AdminProductCtr {
      * */
     @RequestMapping("/admin/product/edit/")
     public String getFormProduct(@RequestParam("id")Long id, Model model){
-        Optional<Product> product = productRepository.findById(id);
-        if (product.isPresent()){
-            ProductDto productDto = new ProductDto(product.get());
-            model.addAttribute("productDto", productDto);
+        if (id != null){
+            Product product = productRepository.findById(id).get();
+            model.addAttribute("product", product);
         }
 
         return "admin/product_form";

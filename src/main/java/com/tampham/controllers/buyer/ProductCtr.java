@@ -1,27 +1,18 @@
 package com.tampham.controllers.buyer;
 
 import com.tampham.dtos.OrderItemDto;
-import com.tampham.dtos.ProductDto;
 import com.tampham.enums.TimeLicense;
-import com.tampham.models.OrderItem;
 import com.tampham.models.Product;
-import com.tampham.models.Role;
-import com.tampham.models.User;
 import com.tampham.repository.ProductRepository;
 import com.tampham.repository.RoleRepository;
 import com.tampham.repository.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Controller
 public class ProductCtr {
