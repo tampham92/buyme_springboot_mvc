@@ -2,6 +2,8 @@ package com.tampham.repository;
 
 import com.tampham.models.Order;
 import com.tampham.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+
+    Page<Order> findByUserOrderByIdDesc(User user, Pageable pageable);
     List<Order> findByUser(User user);
     Order findByOrderCode(String orderCode);
 }

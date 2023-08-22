@@ -13,20 +13,19 @@ import com.tampham.repository.OrderRepository;
 import com.tampham.repository.ProductRepository;
 import com.tampham.repository.UserRepository;
 import com.tampham.services.HashIdService;
+import com.tampham.services.OrderService;
 import com.tampham.services.PaymentService;
 import com.tampham.utils.RandomStringUtils;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.UnsupportedEncodingException;
@@ -46,6 +45,9 @@ public class OrderCtr {
     private OrderRepository orderRepository;
 
     @Autowired
+    private OrderService orderService;
+
+    @Autowired
     private PaymentService paymentService;
 
     @Autowired
@@ -56,6 +58,11 @@ public class OrderCtr {
 
     @GetMapping("/order/orderList")
     public String getAllOrder(Model model){
+        return getOderOnePage(model, 1);
+    }
+
+    @GetMapping("/order/orderList/page")
+    public String getOderOnePage(Model model, @RequestParam("p") int currentPage){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Kiểm tra user phải đăng nhập, và check ROLE nếu là ADMIN thì ko cần filter
@@ -67,17 +74,19 @@ public class OrderCtr {
         }
 
         List<Order> orders = new ArrayList<>();
+        long totalPages = 0;
         if (ROLE.equals("USER")){
             User user = userRepository.findByUsername(authentication.getName()).get();
-            orders = orderRepository.findByUser(user);
+            Page<Order> orderPage = orderService.findByUser(user, currentPage);
+            orders = orderPage.getContent();
+            totalPages = orderPage.getTotalPages();
         }
 
-//        if (ROLE.equals("ADMIN")){
-//            orders = orderRepository.findAll();
-//        }
-
         model.addAttribute("hashIdService", hashIdService);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("orders", orders);
+
         return "order/order_list";
     }
 

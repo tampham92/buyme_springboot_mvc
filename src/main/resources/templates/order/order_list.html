@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.w3.org/1999/xhtml"
-      layout:decorate="layout/main_layout">
+      layout:decorate="~{layout/main_layout}">
 
 <div layout:fragment="content">
+    <div class="input-group">
+        <input type="search" class="form-control rounded" placeholder="Mã đơn hàng, hoặc tên sản phẩm" aria-label="Search" aria-describedby="search-addon" />
+        <button type="button" class="btn btn-outline-primary">search</button>
+    </div>
     <table class="table my-3">
         <thead>
         <tr class="table-primary">
@@ -48,6 +51,25 @@
         </td>
         </tbody>
     </table>
-    <label th:if="${orders.size == 0}">Quý khách chưa có đơn hàng nào</label>
+    <nav>
+        <ul class="pagination">
+            <li th:class="${currentPage == 1 ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/order/orderList/page(p=1)}">First</a>
+            </li>
+            <li th:class="${currentPage == 1 ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1})}">Previous</a>
+            </li>
+            <li th:block th:each="i: ${#numbers.sequence(1, totalPages)}"
+                th:class="${currentPage == i ? 'page-item active' : 'page-item'}">
+                <a class="page-link" th:href="@{/order/orderList/page(p=${i})}">[[${i}]]</a>
+            </li>
+            <li th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1})}">Next</a>
+            </li>
+            <li th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}">
+                <a class="page-link" th:href="@{/order/orderList/page(p=${totalPages})}">Last</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </html>
