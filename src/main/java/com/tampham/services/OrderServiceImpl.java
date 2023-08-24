@@ -18,9 +18,10 @@ public class OrderServiceImpl implements OrderService{
     public Page<Order> findByUser(User user, int pageNumber, String keyword) {
         if (user != null){
             Pageable pageable = PageRequest.of(pageNumber -1, 5);
-//            if (keyword != null){
-//                return orderRepository.findAll(user.getId(), keyword, pageable);
-//            }
+            if (keyword != null){
+                System.out.println(keyword);
+                return orderRepository.findAll(user.getId(), keyword, pageable);
+            }
             return orderRepository.findByUserOrderByIdDesc(user, pageable);
         }
         return null;

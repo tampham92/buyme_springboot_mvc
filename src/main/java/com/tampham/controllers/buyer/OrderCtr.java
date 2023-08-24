@@ -58,7 +58,7 @@ public class OrderCtr {
 
     @GetMapping("/order/orderList")
     public String getAllOrder(Model model){
-        String keyword = "TM";
+        String keyword = "M";
         return getOderOnePage(model, 1, keyword);
     }
 
@@ -79,6 +79,7 @@ public class OrderCtr {
         if (ROLE.equals("USER")){
             User user = userRepository.findByUsername(authentication.getName()).get();
             Page<Order> orderPage = orderService.findByUser(user, currentPage, keyword);
+            System.out.println(orderPage.getContent());
             orders = orderPage.getContent();
             totalPages = orderPage.getTotalPages();
         }
