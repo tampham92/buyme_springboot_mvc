@@ -4,9 +4,18 @@
       layout:decorate="~{layout/main_layout}">
 
 <div layout:fragment="content">
-    <div class="input-group">
-        <input type="search" class="form-control rounded" placeholder="Mã đơn hàng, hoặc tên sản phẩm" aria-label="Search" aria-describedby="search-addon" />
-        <button type="button" class="btn btn-outline-primary">search</button>
+    <div class="d-flex">
+        <form class="input-group" th:action="@{/order/orderList/page}" method="get">
+            <input type="hidden" name="p" th:value="1">
+            <input type="search" class="form-control rounded" placeholder="Mã đơn hàng, hoặc tên sản phẩm"
+                   aria-label="Search" aria-describedby="search-addon"
+                   name="k" th:value="${keyword}"/>
+            <span class="input-group-append">
+                    <button class="btn btn-outline-secondary bg-white rounded" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </span>
+        </form>
     </div>
     <table class="table my-3">
         <thead>
@@ -54,20 +63,20 @@
     <nav th:if="${totalPages > 0}">
         <ul class="pagination">
             <li th:class="${currentPage == 1 ? 'page-item disabled' : 'page-item'}">
-                <a class="page-link" th:href="@{/order/orderList/page(p=1)}">First</a>
+                <a class="page-link" th:href="@{/order/orderList/page(p=1,k=${keyword})}">First</a>
             </li>
             <li th:class="${currentPage == 1 ? 'page-item disabled' : 'page-item'}">
-                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1})}">Previous</a>
+                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1},k=${keyword})}">Previous</a>
             </li>
             <li th:block th:each="i: ${#numbers.sequence(1, totalPages)}"
                 th:class="${currentPage == i ? 'page-item active' : 'page-item'}">
-                <a class="page-link" th:href="@{/order/orderList/page(p=${i})}">[[${i}]]</a>
+                <a class="page-link" th:href="@{/order/orderList/page(p=${i},k=${keyword})}">[[${i}]]</a>
             </li>
             <li th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}">
-                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1})}">Next</a>
+                <a class="page-link" th:href="@{/order/orderList/page(p=${currentPage + 1},k=${keyword})}">Next</a>
             </li>
             <li th:class="${currentPage == totalPages ? 'page-item disabled' : 'page-item'}">
-                <a class="page-link" th:href="@{/order/orderList/page(p=${totalPages})}">Last</a>
+                <a class="page-link" th:href="@{/order/orderList/page(p=${totalPages},k=${keyword})}">Last</a>
             </li>
         </ul>
     </nav>

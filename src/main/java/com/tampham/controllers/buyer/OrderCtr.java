@@ -58,14 +58,12 @@ public class OrderCtr {
 
     @GetMapping("/order/orderList")
     public String getAllOrder(Model model){
-        String keyword = "M";
-        return getOderOnePage(model, 1, keyword);
+        return getOderOnePage(model, 1, null);
     }
 
     @GetMapping("/order/orderList/page")
     public String getOderOnePage(Model model, @RequestParam("p") int currentPage, @RequestParam("k") String keyword){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         // Kiểm tra user phải đăng nhập, và check ROLE nếu là ADMIN thì ko cần filter
         String ROLE = null;
         if (authentication != null){
@@ -79,13 +77,13 @@ public class OrderCtr {
         if (ROLE.equals("USER")){
             User user = userRepository.findByUsername(authentication.getName()).get();
             Page<Order> orderPage = orderService.findByUser(user, currentPage, keyword);
-            System.out.println(orderPage.getContent());
             orders = orderPage.getContent();
             totalPages = orderPage.getTotalPages();
         }
 
         model.addAttribute("hashIdService", hashIdService);
         model.addAttribute("currentPage", currentPage);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("orders", orders);
 
