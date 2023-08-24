@@ -8,5 +8,6 @@ import java.util.List;
 
 
 public interface OrderService {
-    Page<Order> findByUser(User user, int pageNumber);
+    Page<Order> findByUser(User user, int pageNumber, String keyword);
+
 }

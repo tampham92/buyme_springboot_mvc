@@ -15,9 +15,12 @@ public class OrderServiceImpl implements OrderService{
     private OrderRepository orderRepository;
 
     @Override
-    public Page<Order> findByUser(User user, int pageNumber) {
+    public Page<Order> findByUser(User user, int pageNumber, String keyword) {
         if (user != null){
             Pageable pageable = PageRequest.of(pageNumber -1, 5);
+//            if (keyword != null){
+//                return orderRepository.findAll(user.getId(), keyword, pageable);
+//            }
             return orderRepository.findByUserOrderByIdDesc(user, pageable);
         }
         return null;

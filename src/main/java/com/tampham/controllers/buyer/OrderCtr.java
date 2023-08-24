@@ -58,11 +58,12 @@ public class OrderCtr {
 
     @GetMapping("/order/orderList")
     public String getAllOrder(Model model){
-        return getOderOnePage(model, 1);
+        String keyword = "TM";
+        return getOderOnePage(model, 1, keyword);
     }
 
     @GetMapping("/order/orderList/page")
-    public String getOderOnePage(Model model, @RequestParam("p") int currentPage){
+    public String getOderOnePage(Model model, @RequestParam("p") int currentPage, @RequestParam("k") String keyword){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // Kiểm tra user phải đăng nhập, và check ROLE nếu là ADMIN thì ko cần filter
@@ -77,7 +78,7 @@ public class OrderCtr {
         long totalPages = 0;
         if (ROLE.equals("USER")){
             User user = userRepository.findByUsername(authentication.getName()).get();
-            Page<Order> orderPage = orderService.findByUser(user, currentPage);
+            Page<Order> orderPage = orderService.findByUser(user, currentPage, keyword);
             orders = orderPage.getContent();
             totalPages = orderPage.getTotalPages();
         }
@@ -203,7 +204,6 @@ public class OrderCtr {
         if (form.getPaymentType().equals(PaymentType.MOMO)){
             order.setPaymentType(form.getPaymentType());
             order.setStatus(OrderStatus.PENDING);
-            orderRepository.save(order);
 
             String orderInfo = "Mua goi " + order.getItems().get(0).getProduct().getProductName();
             MomoResponseDto response = (MomoResponseDto) paymentService.createPayment(Double.valueOf(order.getAmount()).longValue(), order.getOrderCode(), orderInfo);
@@ -213,6 +213,8 @@ public class OrderCtr {
                 model.addAttribute("paymentTypes", paymentTypes);
                 return "order/checkout_form";
             }
+
+            orderRepository.save(order);
             return "redirect:" + response.getPayUrl();
         }
 

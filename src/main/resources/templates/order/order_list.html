@@ -51,7 +51,7 @@
         </td>
         </tbody>
     </table>
-    <nav>
+    <nav th:if="${totalPages > 0}">
         <ul class="pagination">
             <li th:class="${currentPage == 1 ? 'page-item disabled' : 'page-item'}">
                 <a class="page-link" th:href="@{/order/orderList/page(p=1)}">First</a>
