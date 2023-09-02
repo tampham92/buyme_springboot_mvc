@@ -17,7 +17,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Họ tên</label>
-                            <input type="hidden" class="form-control" placeholder="" th:field="${order.user.id}">
+                            <input type="hidden" class="form-control" th:field="${order.user.id}">
                             <input type="text" class="form-control" placeholder="" th:field="*{buyerName}">
                             <p th:if="${errors}" class="text-danger">[[${errors.get("fullName")}]]</p>
                         </div>

@@ -124,13 +124,10 @@ public class OrderCtr {
     }
 
     @PostMapping("/order/checkout")
-    public String checkoutOrder(OrderItemDto itemDto, Model model){
+    public String checkoutOrder(OrderItemDto itemDto, Model model, Authentication authentication){
         // Kiểm tra xem user đã đăng nhập chưa, nếu đã đăng nhập mới được vào phần checkout
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && itemDto.getProduct() != null){
-            String currentUser = authentication.getName();
-            User user = userRepository.findByUsername(currentUser).get();
-
+        User user = (User)authentication.getPrincipal();
+        if (user != null && itemDto.getProduct() != null){
             OrderItem orderItem = new OrderItem();
             orderItem.setQuantity(itemDto.getQuantity());
             orderItem.setProduct(itemDto.getProduct());
@@ -150,7 +147,6 @@ public class OrderCtr {
             model.addAttribute("paymentTypes", paymentTypes);
             model.addAttribute("order", order);
         }
-
         return "order/checkout_form";
     }
 

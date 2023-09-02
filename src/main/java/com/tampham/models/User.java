@@ -20,7 +20,6 @@ import java.util.*;
 public class User extends BaseModel implements UserDetails {
     @Getter
     @Setter
-    @NotEmpty(message = "Vui lòng nhập tên")
     private String fullName;
 
     @Getter
@@ -49,6 +48,14 @@ public class User extends BaseModel implements UserDetails {
     @Setter
     @Lob
     private byte[] avatar;
+
+    @Getter
+    @Setter
+    private String verifyCode;
+
+    @Getter
+    @Setter
+    private boolean isEnable;
 
     @Getter
     @Setter

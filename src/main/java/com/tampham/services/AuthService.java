@@ -5,6 +5,7 @@ import com.tampham.models.Role;
 import com.tampham.models.User;
 import com.tampham.repository.RoleRepository;
 import com.tampham.repository.UserRepository;
+import com.tampham.utils.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,12 +33,16 @@ public class AuthService {
     public User registerUser(RegisterDto registerDto){
         User user = new User();
 
+        // Create generator code
+        String verifyCode = RandomStringUtils.getAlphaNumericString(6);
+
         user.setUsername(registerDto.getUsername());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setAddress(registerDto.getAddress());
         user.setFullName(registerDto.getFullName());
         user.setPhoneNumber(registerDto.getPhoneNumber());
+        user.setVerifyCode(verifyCode);
 
         // Các user mới mặc định chỉ cho quyền USER
         Role userRole = roleRepository.findByAuthority("USER").get();

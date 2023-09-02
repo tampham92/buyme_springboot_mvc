@@ -20,13 +20,13 @@ import java.util.HashMap;
 @Service
 public class PaymentServiceMoMoImpl implements PaymentService {
     private String URL_MOMO  = "https://test-payment.momo.vn/v2/gateway/api";
-    @Value("${momo.ACCESS_KEY}")
+    @Value("${spring.momo.ACCESS_KEY}")
     private String ACCESS_KEY;
 
-    @Value("${momo.PARTNER_CODE}")
+    @Value("${spring.momo.PARTNER_CODE}")
     private String PARTNER_CODE;
 
-    @Value("${momo.SECRET_KEY}")
+    @Value("${spring.momo.SECRET_KEY}")
     private String SECRET_KEY;
 
     @Override

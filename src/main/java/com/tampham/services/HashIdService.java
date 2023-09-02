@@ -6,18 +6,18 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HashIdService {
-    @Value("${app.secret}")
+    @Value("${spring.app.secret}")
     private String salt;
 
-    private String alphaBet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+    private final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
 
     public String endCodeId(Long id){
-        Hashids hashids = new Hashids(salt, 6, alphaBet);
+        Hashids hashids = new Hashids(salt, 6, ALPHABET);
         return hashids.encode(id);
     }
 
     public Long deCodeId(String id){
-        Hashids hashids = new Hashids(salt, 6, alphaBet);
+        Hashids hashids = new Hashids(salt, 6, ALPHABET);
         long[] result = hashids.decode(id);;
 
         if (result.length > 0){
